@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- get flash messages-->
+<div class=row>
+    <div class="col-md-8">
+       {% with messages= get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+             {% for category, message in messages %}
+                   <div class="alert alert-{{category}}">
+                         <span>{{message}}</span>
+                   </div>
+             {% endfor %}
+          {% endif %}
+       {% endwith %}
+    </div>
+ </div>
+<!-- create your ticket-->
+<div class="content-section"> 
+    <form method="POST" action="" onsubmit="setFormSubmitting()">
+         {{ticket_form.hidden_tag()}}
+         <fieldset class="form-group">
+                <div class="form-group">
+                    {{ticket_form.ticket_quantity.label(class="form-control-label")}}
+                    {% if ticket_form.ticket_quantity.errors %}
+                        {{ticket_form.ticket_quantity(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.ticket_quantity.errors %}
+                                <span> {{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                    {{ ticket_form.ticket_quantity(class="form-control-label") }} 
+                    {% endif %}  
+                </div>
+                <div class="form-group">
+                    {{ticket_form.ticket_type.label(class="form-control-label")}}
+                    {% if ticket_form.ticket_type.errors %}
+                        {{ticket_form.ticket_type(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in ticket_form.ticket_type.errors %}
+                                <span> {{error}} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                    {{ ticket_form.ticket_type(class="form-control-label")}} 
+                    {% endif %}  
+                </div>  
+                <div class="form-group">
+                {{ticket_form.price_ticket.label(class="form-control-label")}}
+                {% if ticket_form.price_ticket.errors %}
+                    {{ticket_form.price_ticket(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ticket_form.price_ticket.errors %}
+                            <span> {{error}} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ ticket_form.price_ticket(class="form-control-label")}} 
+                {% endif %}  
+                </div>  
+                <div class="form-group">
+                    {{ticket_form.start_dh_tickets.label(class="form-control-label")}}
+                    {% if ticket_form.start_dh_tickets.errors %}
+                    {{ticket_form.start_dh_tickets(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ticket_form.start_dh_tickets.errors %}
+                            <span> {{error}} </span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ ticket_form.start_dh_tickets(class="form-control-label")}} 
+                    {% endif %}  
+                </div> 
+                <div class="form-group">
+                {{ticket_form.finish_dh_tickets.label(class="form-control-label")}}
+                {% if ticket_form.finish_dh_tickets.errors %}
+                    {{ticket_form.finish_dh_tickets(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                    {% for error in ticket_form.finish_dh_tickets.errors %}
+                        <span> {{error}} </span>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    {{ ticket_form.finish_dh_tickets(class="form-control-label")}} 
+                {% endif %}  
+                </div>  
+                <div class="form-group">
+                    {{ticket_form.submit_ticket(class="btn btn-primary")}}  
+                </div>
+        </fieldset>
+    </form> 
+</div>
+{% endblock content %}

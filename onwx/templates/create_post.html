@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<!-- get flash messages-->
+<div class=row>
+    <div class="col-md-8">
+       {% with messages= get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+             {% for category, message in messages %}
+                   <div class="alert alert-{{category}}">
+                         <span>{{message}}</span>
+                   </div>
+             {% endfor %}
+          {% endif %}
+       {% endwith %}
+    </div>
+ </div>
+ 
+<!-- section for the name of the event  and description-->
+<div class="content-section"> 
+    <form method="POST" action="" enctype="multipart/form-data" onsubmit="setFormSubmitting()">
+         {{post_form.hidden_tag()}}
+         <fieldset class="form-group">
+               <legend class="border-bottom mb-4"> {{ legend }}</legend>
+               <div class="form-group">
+                  {{post_form.title.label(class="form-control-label")}}
+                  {% if post_form.title.errors %}
+                        {{post_form.title(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                           {% for error in post_form.title.errors %}
+                              <span> {{error}}</span>
+                           {% endfor %}
+                        </div>
+                  {% else %}
+                     {{ post_form.title(class="form-control-label")}} 
+                  {% endif %}  
+               </div>
+               <div class="form-group">
+                  {{post_form.content.label(class="form-control-label")}}
+                  {% if post_form.content.errors %}
+                     {{post_form.content(class="form-control form-control-lg is-invalid")}}
+                     <div class="invalid-feedback">
+                           {% for error in post_form.content.errors %}
+                              <span> {{error}} </span>
+                           {% endfor %}
+                     </div>
+                  {% else %}
+                     {{ post_form.content(class="form-control-label")}} 
+                  {% endif %}  
+               </div>  
+               <!-- section for setting the date and hour of the event-->
+               <!--  starting date hour-->
+               <div class="form-group">
+                  {{post_form.start_dh.label(class="form-control-label")}}
+                  {% if post_form.start_dh.errors %}
+                       {{post_form.start_dh(class="form-control form-control-lg is-invalid")}}
+                       <div class="invalid-feedback">
+                           {% for error in post_form.start_dh.errors %}
+                              <span> {{error}}</span>
+                           {% endfor %}
+                       </div>
+                  {% else %}
+                     {{ post_form.start_dh(class="form-control-label")}} 
+                  {% endif %}  
+               <!-- finish -->
+               <div class="form-group">
+                  {{post_form.finish_dh.label(class="form-control-label")}}
+                  {% if post_form.finish_dh.errors %}
+                      {{post_form.finish_dh(class="form-control form-control-lg is-invalid")}}
+                      <div class="invalid-feedback">
+                           {% for error in post_form.finish_dh.errors %}
+                              <span> {{error}} </span>
+                           {% endfor %}
+                      </div>
+                  {% else %}
+                     {{ post_form.finish_dh(class="form-control-label")}} 
+                  {% endif %}  
+               </div> 
+               <!-- image -->
+               <div class="form-group">
+                  {{post_form.image_file.label()}}
+                  {{post_form.image_file(class="form-control-file")}}
+                  {% if post_form.image_file.errors %}
+                           {% for error in post_form.image_file.errors %}
+                              <span class="text-danger"> {{error}} </span></br>
+                           {% endfor %}
+                  {% endif %}  
+               </div> 
+               <div class="form-group">
+                  {{post_form.submit_post(class="btn btn-primary")}}  
+               </div>
+         </fieldset>
+    </form> 
+</div>
+
+<script type="text/javascript">
+   var formSubmitting = false;
+   var setFormSubmitting = function() { formSubmitting = true; };
+
+   window.onload = function() {
+   window.addEventListener("beforeunload", function (e) {
+        if (formSubmitting) {
+            return undefined;
+        }
+
+        var confirmationMessage = 'It looks like you have been editing something. '
+                                + 'If you leave before saving, your changes will be lost.';
+
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    });
+};
+</script>
+{% endblock content %}

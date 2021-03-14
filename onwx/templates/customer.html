@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- get flash messages-->
+<div class=row>
+    <div class="col-md-8">
+       {% with messages= get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{category}}">
+                     <span>{{message}}</span>
+                </div>
+            {% endfor %}
+          {% endif %}
+       {% endwith %}
+    </div>
+</div>
+
+<!-- buy tickets-->
+<div class="content-section"> 
+    <form method="POST" action="">
+         {{customer.hidden_tag()}}
+         <fieldset class="form-group">
+                <div class="form-group">
+                    {{customer.number_tickets.label(class="form-control-label")}}
+                    {% if customer.number_tickets.errors %}
+                          {{customer.number_tickets(class="form-control form-control-lg is-invalid")}}
+                          <div class="invalid-feedback">
+                              {% for error in customer.number_tickets.errors %}
+                                 <span> {{error}} </span>
+                              {% endfor %}
+                          </div>
+                    {% else %}
+                            {{ customer.number_tickets(class="form-control-label")}} 
+                    {% endif %}  
+                </div>    
+                <div class="form-group">
+                    {{customer.name.label(class="form-control-label")}}
+                    {% if customer.name.errors %}
+                        {{customer.name(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in ticket_form.ticket_quantity.errors %}
+                                <span> {{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                    {{ customer.name(class="form-control-label")}} 
+                    {% endif %}  
+                </div>
+                <div class="form-group">
+                    {{customer.customer_email.label(class="form-control-label")}}
+                    {% if customer.customer_email.errors %}
+                        {{customer.customer_email(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in customer.customer_email.errors %}
+                                <span> {{error}} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                    {{ customer.customer_email(class="form-control-label")}} 
+                    {% endif %}  
+                </div>  
+                <div class="form-group">
+                {{customer.card_number.label(class="form-control-label")}}
+                {% if customer.card_number.errors %}
+                    {{customer.card_number(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in customer.card_number.errors %}
+                            <span> {{error}} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ customer.card_number(class="form-control-label")}} 
+                {% endif %}  
+                </div>  
+                <div class="form-group">
+                    {{customer.submit_customer(class="btn btn-outline-info")}}  
+                </div>
+        </fieldset>
+    </form> 
+</div>
+{% endblock content %}

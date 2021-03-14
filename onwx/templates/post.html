@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- linking the css sheet-->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='customer.css')}}">
+
+<!-- get flash messages-->
+<div class=row>
+    <div class="col-md-8">
+       {% with messages= get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{category}}">
+                     <span>{{message}}</span>
+                </div>
+            {% endfor %}
+          {% endif %}
+       {% endwith %}
+    </div>
+  </div>
+<!-- display of the post-->
+
+<!-- image -->
+<article style= "position:relative; left:160px;">
+    <img src="{{ url_for('static', filename ='event_pics/' + post.image_file) }}">
+    <div class="media-body">  
+    </div>
+</article>
+  
+<article class="media content-section" style = "position:relative; left:160px;">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{{ url_for('event', username=post.author.username) }}">{{ post.author.username }}</a>
+        </div>
+        <h2 class="article-title">{{ post.title }}</h2>
+        <small class="text-muted" style= "position:relative;bottom:15px;"> party day {{ post.start_dh.strftime("%Y-%m-%d")  }}</small>
+        <p class="article-content"> {{ post.content }}</p>
+    </div>
+</article>
+
+
+{% if post.author==current_user %}
+  <div style = "position:relative; left:160px; bottom:10px;">
+      <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post',post_id=post.id)}}">Update info</a>
+      <!--button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button -->
+  </div>
+  <article class="media content-section" style = "position:relative; left:160px;">
+    <div class="media-body" style="position:relative; top:110px;">
+      {% for info in post.ticket %}
+      <div style= "position:relative; left:10px; bottom:70px; ">{{ info.ticket_type }}</div>
+      <div style= "position:relative; left:80px; bottom:92px; ">{{ info.price_ticket }}</div>
+      <div style= "position:relative; left:160px; bottom:117px; ">{{ info.ticket_quantity }}</div>
+      <div style= "position:relative; left:230px; bottom:142px; ">{{ info.start_dh_tickets }}</div>
+      <div style= "position:relative; left:460px; bottom:167px;">{{ info.finish_dh_tickets }}</div>
+      {% endfor %}  
+    </div>
+  </article>
+  <div style = "position:relative; left:160px; bottom:10px">
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('name_update',post_id=post.id)}}">Update Tickets</a>
+    <!--button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button> --> 
+  </div>
+  <div style = "position:relative; left:710px;bottom:49px">
+  <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button> 
+  </div>
+{% endif %}
+
+<!-- display of the flyer of the event--> 
+
+
+
+
+
+<!-- display of the tickets of the event-->
+{% if post.author!=current_user %} 
+ <div class="table-tickets col-lg-4 col-md-4 col-sm-12 col-xs-12 margin-top-20-xs margin-top-0-md">
+     <form method="POST" action="">
+       <fieldset class="for_group">
+         <div style = "position:relative; left:160px;">  
+           {% for info in post.ticket %}
+              {% if info.start_dh_tickets<=today<= info.finish_dh_tickets %}
+                  <div style = "position:relative; left:160px;"> 
+                      <h4 class="kill-top-margin kill-bottom-margin" style="font-weight: bold;"> price</h4>
+                  </div> 
+                  <h4 class="kill-top-margin kill-bottom-margin"> ${{ info.price_ticket }} </h4>
+                  <div class="buy-container exteded-buy-container text-center">
+                    <div class="row">
+                         <div class="col-lbl col-xs-5 col-sm-5 text-left">
+                              <div class="col-btn col-xs-12 col-sm-12" style ="position:relative; left:220px; bottom:50px" >
+                                  <a id="btnContinue" class="btn btn-primary btn-vr ripple-slow" data-color="#FFBF75" href="{{ url_for('customer', post_id=post.id) }}"> Buy </a>
+                              </div>
+                         </div>   
+                    </div>
+                  </div>
+              {% endif %}
+           {% endfor %}
+         </div>    
+       </fieldset> 
+     </form>
+ </div>
+{% endif %}
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete post?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
+          <form action="{{ url_for('delete_post',post_id=post.id)}}" method="POST">
+              <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}

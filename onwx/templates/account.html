@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block content %}
+   <!-- get flash messages-->
+<div class=row>
+      <div class="col-md-8">
+         {% with messages= get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+               {% for category, message in messages %}
+                  <div class="alert alert-{{category}}">
+                     <span>{{message}}</span>
+                  </div>
+               {% endfor %}
+            {% endif %}
+         {% endwith %}
+      </div>
+</div>  
+   <!--user photo and username-->
+<div class="content-section"> 
+     <div class="media">  
+        <div class="col-btn col-xs-16 col-sm-8">
+           <h2 class="account-heading"> {{ current_user.username }}</h2>   
+        </div>
+     </div>  
+</div> 
+
+<div class="content-section">
+ <!-- section for updating the email,user and image -->
+ <form method="POST" action="" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    <fieldset class="form-group">
+         <legend class="border-bottom mb-4">Account info</legend>
+         <div class="form-group">
+            {{form.username.label(class="form-control-label")}}
+               {% if form.username.errors %}
+                  {{form.username(class="form-control form-control-lg is-invalid")}}
+                  <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                           <span> {{error}}</span>
+                        {% endfor %}
+                  </div>
+               {% else %}
+                  {{ form.username(class="form-control-label")}} 
+            {% endif %} 
+         </div>
+         <div class="form-group">
+            {{form.email.label(class="form-control-label")}}
+            {% if form.email.errors %}
+               {{form.email(class="form-control form-control-lg is-invalid")}}
+            <div class="invalid-feedback">
+               {% for error in form.email.errors %}
+                  <span> {{error}}</span>
+               {% endfor %}
+            </div>
+            {% else %}
+                  {{ form.email(class="form-control-label")}} 
+            {% endif %}  
+         </div>
+     </fieldset>
+     <div class="form-group">
+          {{form.submit(class="btn btn-primary")}}  
+     </div>
+  </form>
+</div>
+
+<div class="content-section">
+   <a class="mr-2">
+      EVENTS:EVENTS:EVENTS:EVENTS:EVENTS
+   </a>
+</div>
+
+
+<!-- display of the post-->
+{% for post in posts %}
+     <article class="media content-section">
+        <!--img class="rounded-circle article-img" src="{{ url_for('static', filename ='profile_pics/' + post.author.image_file) }}"-->
+        <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2">{{ post.author.username }}</a>
+            <small class="text-muted" style= "position:relative; left:500px">from {{ post.start_dh.strftime("%Y-%m-%d")  }}</small>
+          </div>
+          <h2><a class="article-title" href="{{ url_for('post', post_id=post.id)}}">{{ post.title }}</a></h2>
+          <p class="article-content"> {{ post.content }}</p>
+        </div>
+      </article>
+{% endfor %}
+   
+{% endblock content %}
