@@ -308,7 +308,7 @@ def customer(post_id):
             url.png("/Users/maverb/Documents/la.jpg", scale=8)
             #my e-mail data
             EMAIL_ADDRESS= "onwaxcomm@gmail.com"
-            EMAIL_PASSWORD="libernacus"
+            EMAIL_PASSWORD="lalala"
             #reciver data
             EMAIL_RECEIVER=customer.customer_email.data
             #cofigurating the email information
