@@ -19,18 +19,17 @@ from email.utils import formataddr
 from datetime import datetime
 import json 
 
+#a route to show all the available tickets created in the platform
 @app.route("/")
-@app.route("/home")
 def home():
     page=request.args.get("page",1, type=int)
-    
     posts=Post.query.order_by(Post.date_posted.desc()).paginate(page=page,per_page=5)
     return render_template("home.html",posts=posts)
 
-
+#just a regular register page 
 @app.route("/register", methods=["GET","POST"])
 def register():
-    #this redirects to home if the user is already logged in
+    #this redirects to the homepage 
     if current_user.is_authenticated:
         return redirect(url_for("home"))
     #validating the submission     
@@ -43,38 +42,39 @@ def register():
         #adding the user to the database
         db.session.add(user)
         db.session.commit()
-        #flash message for succesful creation of users
         flash("account created","success")
-        #redirects to the login page after the creation 
+        #redirects to the log in page after the creation 
         return redirect(url_for("login")) 
     return render_template("register.html",title="Register", form=form)
 
+#just a regular log in page 
 @app.route("/login", methods=["GET","POST"])
 def login():
-    #this redirects to home if the user is already logged in
     if current_user.is_authenticated:
         return redirect(url_for("home"))
     form= LoginForm()
     if form.validate_on_submit():
-          #checking if the user exists
+          #checking if the user already exists
           user = User.query.filter_by(email=form.email.data).first()
           #checking if the user is correlated with the inserted password
           if user and bcrypt.check_password_hash(user.password,form.password.data):
              login_user(user,remember=form.remember.data)
-             flash("logged in","success")
              return redirect(url_for("account"))
           else:   
               flash("failed log in", "danger" )   
     return render_template("login.html",title="Login", form=form)
 
+#just a regular log out route
 @app.route("/logout")  
 def logout():
     logout_user()
     return redirect(url_for("home"))
 
+#route that permits you update the information of the user 
 @app.route("/account",methods=["GET","POST"])
 @login_required
 def account():
+    #validating the actualization of the data 
     form=UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -102,7 +102,6 @@ def save_picture(form_picture):
      i=Image.open(form_picture)
      i.thumbnail(output_size)
      i.save(picture_path)
-     #form_picture.save(picture_path)
      return picture_fn
 
 #route containing the update account form
@@ -129,16 +128,16 @@ def update():
 
  #route for creating a new post 
 
+#route that handles the creation of a new event
 @app.route("/post/new",methods=["GET","POST"])  
 @login_required
 def new_post(): 
-    #event forms
     post_form=PostForm()
-    #valdiating the submission of those forms
+    #valdating the submission of those forms
     if post_form.validate_on_submit():
         if post_form.image_file.data:
             picture_file=save_picture(post_form.image_file.data)
-        #loading to our database
+        #inserting and saving the data
         post=Post(title=post_form.title.data,content=post_form.content.data,start_dh=post_form.start_dh.data,
                    finish_dh=post_form.finish_dh.data,image_file=picture_file,author=current_user)                    
         db.session.add(post)
@@ -147,33 +146,28 @@ def new_post():
         return redirect(url_for("tickets", post_id=post.id))
     return render_template("create_post.html",title="new post",post_form=post_form,legend="New Event")
 
-#create new tickets
+#route that handles the tickets creation of the new event(2 steps creation)
 @app.route("/ticket/<int:post_id>",methods=["GET","POST"])  
 @login_required
 def tickets(post_id):
     post=Post.query.get_or_404(post_id)
     ticket_form=TicketForm() 
-    #this variable give us the id of the last post that this user posted
-    post_relation=Post.query.filter_by(user_id=current_user.id).order_by(Post.date_posted.desc()).first()
-    #submission
-
+    #validating the submission of the tickets
     if  ticket_form.validate_on_submit(): 
+        #insterting adn saving the new tickets
         tickets=Tickets(ticket_type=ticket_form.ticket_type.data,ticket_quantity=ticket_form.ticket_quantity.data,
                          price_ticket=ticket_form.price_ticket.data, start_dh_tickets=ticket_form.start_dh_tickets.data,
-                         finish_dh_tickets=ticket_form.finish_dh_tickets.data,event=post_relation)  
+                         finish_dh_tickets=ticket_form.finish_dh_tickets.data,event=post)  
         db.session.add(tickets)
         db.session.commit() 
         flash("your tickets have been created","success")
+        #it redirects to the tickets as the user could want to create more than one type of tickets
         return redirect(url_for("tickets",post_id=post.id))  
     tick=Tickets.query.order_by(Tickets.post_id)   
     return render_template("create_ticket.html",title="tickets",ticket_form=ticket_form,tick=tick,post_id=post.id)        
-                
-@app.route("/event")
-def event():
-    post_form=PostForm()
-    ticket_form=TicketForm()
-    return render_template("event.html", title="event", post_form=post_form,ticket_form=ticket_form)
 
+
+#route that handles the confirmation of the creation of the event and tickets
 @app.route("/postevent")
 def post_event():
     flash("you just posted your event", "success")
@@ -181,13 +175,15 @@ def post_event():
     posts=Post.query.order_by(Post.date_posted.desc()).paginate(page=page,per_page=5)
     return render_template("home.html", posts=posts)
 
+#information and purchase option of the event 
 @app.route("/post/<int:post_id>",methods=["GET","POST"])
 def post(post_id):
     post=Post.query.get_or_404(post_id)
+    #we pass the day to know if the tickets started selling already
     today=datetime.now()
     return render_template("post.html",title=post.title, post=post,today=today)
 
-#update post info
+#route that let the user update the information of the created events
 @app.route("/post/<int:post_id>/update",methods=["GET","POST"])
 @login_required
 def update_post(post_id):
@@ -221,8 +217,6 @@ def update_tickets(post_id,name):
    post=Post.query.get_or_404(post_id)
    print "the name of the ticket is %s" % (str(name))
    ticket_form=TicketForm()
-   #ticket=Tickets.query.filter_by(id=post_id).first()
-   #quantity=Tickets.query.filter(Tickets.post_id==post_id).first()
    ticket=Tickets.query.filter(Tickets.post_id==post_id).filter(Tickets.ticket_type==str(name)).first()
    #update and validate tickets     
    if ticket_form.validate_on_submit():
@@ -242,12 +236,13 @@ def update_tickets(post_id,name):
        ticket_form.finish_dh_tickets.data=ticket.finish_dh_tickets
    return render_template("update_ticket.html",title="update tickets",ticket_form=ticket_form, legend="Update Tickets") 
 
-#name of the ticket you want to update
+#view name of the ticket you want to update, we ask to the user which is the kind
+#of the ticket to be updated
 @app.route("/post/<int:post_id>/name",methods=["GET","POST"])
 @login_required
 def name_update(post_id):
    post=Post.query.get_or_404(post_id)
-   form= RegistrationForm()
+   form=RegistrationForm()
    if request.method=="POST":
       unicode_name=request.form["nm"]
       name=unicode_name.encode('utf8')
@@ -256,24 +251,22 @@ def name_update(post_id):
          if name==a.ticket_type:
              return redirect(url_for('update_tickets',post_id=post.id,name=name))
       except:
-          flash("there is no ticket with that name","danger")
+          flash('there is no ticket with that name','danger')
           return render_template("name_update.html")          
    else:        
       return render_template("name_update.html")
    
-
-#delete    
+#delete the posted event     
 @app.route("/post/<int:post_id>/delete",methods=["POST"])
 @login_required
 def delete_post(post_id):
     post=Post.query.get_or_404(post_id)
-    ticket=Tickets.query.filter_by(id=post_id).first()
-    if post.author != current_user:
-       abort(403)
+    tickets=Tickets.query.filter_by(id=post_id).all()      
+    for ticket in tickets:
+        db.session.delete(ticket)    
     db.session.delete(post)
-    db.session.delete(ticket)
     db.session.commit()
-    flash("your post has been deleted","success")
+    flash("your post has been deleted","success") 
     return redirect(url_for("home"))
 
 #create ticket route
@@ -282,46 +275,38 @@ def delete_post(post_id):
 def create_ticket():
     return redirect(url_for("ticket"))
 
-
+#this is the route that handle the purchase of the tickets
 @app.route("/post/<int:post_id>/customer",methods=["GET","POST"])
 def customer(post_id):
-    #getting the post for the given id
+    #getting the post id
     post=Post.query.get_or_404(post_id)
-    #accessing the postform
+    #accessing the needed forms 
     postform=PostForm()
-    #accessing the customer form
     customer=CustomerForm()
-    #accessing the ticket form
     ticket=TicketForm()
-
+    #querying the tickets that are available at that exact moment
     quantity=Tickets.query.filter(Tickets.start_dh_tickets<=datetime.now()).filter(Tickets.post_id==post_id).filter(datetime.now()<=Tickets.finish_dh_tickets).first()
-
-
+    #update variable is the quantity of tickets that the customer wants to buy
     update=quantity.ticket_quantity
-    #getting the tickets to subtract the purchased by the customer
     #we want to subtract the tickets that the customer bought and store the info in the customer db
     if update<=2:
         flash("only (%s) tickets left" % (update) , "danger")
     if  customer.validate_on_submit(): 
-            #send email with qr code 
+            #addind and commiting the purchase to the database
             purchase=Customer(name=customer.name.data,card_number=customer.card_number.data,customer_email=customer.customer_email.data,
-                              number_tickets=customer.number_tickets.data,party=post)  
+                                number_tickets=customer.number_tickets.data,party=post)  
             db.session.add(purchase) 
-            #actualization of the ticket database
-            #getting the customer
-            get_cust=Customer.query.get(post_id)
-            #subtract the purchased tickets to the stock of the tickets
-            subtract=update-get_cust.number_tickets
-            #insert the subtract_tickets number to the Tickets db 
+            db.session.commit() 
+            #subtracting the purchased tickets to the stock of the tickets
+            subtract=update-customer.number_tickets.data
+            #updating the database
             quantity.ticket_quantity=subtract
             db.session.commit()    
-            #variable with the qrcode
-            #image="/Users/maverb/Documents/la.png"
-            #qr code generator
+            #qr code generator, it sends you the ticket via e-mail(not available in the github version)
             string="234"
             url=pyqrcode.create(string)
             url.png("/Users/maverb/Documents/la.jpg", scale=8)
-            #user data
+            #my e-mail data
             EMAIL_ADDRESS= "onwaxcomm@gmail.com"
             EMAIL_PASSWORD="libernacus"
             #reciver data
@@ -336,10 +321,11 @@ def customer(post_id):
             body="thanks for buying our tickets, have a nice party"
             subject="tickets"
             msg= MIMEMultipart()
-            msg["Subject"]=subject  #ver como formatear
-            msg["From"]=formataddr((sender_name,address))     #ver como usar el formataddr
+            msg["Subject"]=subject 
+            msg["From"]=formataddr((sender_name,address))    
             msg["To"]=formataddr((reciver_name,reciver))
             msg.attach(MIMEText(body,"plain"))
+            #loading the generated qr code
             try:
                 img=file("/Users/maverb/Documents/la.jpg")
                 p=MIMEBase('image',"jpeg")
@@ -351,26 +337,24 @@ def customer(post_id):
             except Exception as e:
                 print "we did not found the photo"
             text=msg.as_string()
-
+            #sending the e-mail
             try:
                 EMAIL_ADDRESS= "onwaxcomm@gmail.com"
                 EMAIL_PASSWORD="libernacus"
                 smtp=smtplib.SMTP("smtp.gmail.com",587)
-                smtp.ehlo() #check the email
+                smtp.ehlo() #checks the email
                 smtp.starttls() #encrypts our information
                 smtp.ehlo() #reidentify our selves as encrypted connections
                 smtp.login(address,EMAIL_PASSWORD)
-                #msg= "Subject: {} \n\n {}" .format(subject,body)
                 smtp.sendmail(EMAIL_ADDRESS, reciver, text)
-                print "mail sended succesfully"
                 smtp.close()
             except:
                 print("mail not delivered")
-            flash("successfuly bought your tickets, check your email","success")
+            flash("successfuly bought your tickets, check your email ","success")
             return redirect(url_for("home")) 
     return render_template("customer.html",postform=postform,customer=customer,ticket=ticket)   
 
-
+#sending the e-mail to reset the user information
 def send_reset_email(user):
     token=user.get_reset_token()
     msg=Message("Password Reset Request", 
@@ -379,6 +363,7 @@ def send_reset_email(user):
     msg.body=" Reset your password here (%s)" % {url_for("reset_token",token=token,_external=True)}             
     mail.send(msg)
 
+#requesting the e-mail to reset the password
 @app.route("/reset_password",methods=["GET","POST"])  
 def reset_request():
     if current_user.is_authenticated:
@@ -394,6 +379,7 @@ def reset_request():
            return redirect(url_for("login"))   
     return render_template("reset_request.html",title="Reset Password",form=form)
 
+#creating the token for resetting the password
 @app.route("/reset_password/<token>",methods=["GET","POST"])  
 def reset_token(token):
     if current_user.is_authenticated:
@@ -408,7 +394,6 @@ def reset_token(token):
         hashed_password= bcrypt.generate_password_hash(form.password.data).decode('utf-8')      
         user.password=hashed_password
         db.session.commit()
-        #flash message for succesful creation of users
         flash("your password has been updated","success")
         #redirects to the login page after the creation 
         return redirect(url_for("login")) 
@@ -416,14 +401,10 @@ def reset_token(token):
     
 @app.route("/unloaded", methods=["GET","POST"])
 def unloaded():
-  print("unloaded tickets")
   get_postid=request.form
-  print(rf)
   for key in get_postid.keys():
      postid=key
-  print(data)
   postid_dic=json.loads(postid)
-  print(postid_dic.keys())
   postid_data = data_dic["unloaded"]
  
      

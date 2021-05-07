@@ -1,22 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- get flash messages-->
-<div class=row>
-    <div class="col-md-8">
-       {% with messages= get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{category}}">
-                     <span>{{message}}</span>
-                </div>
-            {% endfor %}
-          {% endif %}
-       {% endwith %}
-    </div>
-  </div>
 <!-- display of the posts-->
-
  <h1 class="mb-3"> Event by {{ user.username }} ({{ posts.total }})</h1>
  {% for post in posts.items %}
       <article class="media content-section">

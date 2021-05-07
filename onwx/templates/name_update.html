@@ -1,26 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- get flash messages-->
-<div class=row>
-    <div class="col-md-8">
-       {% with messages= get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{category}}">
-                     <span>{{message}}</span>
-                </div>
-            {% endfor %}
-          {% endif %}
-       {% endwith %}
-    </div>
-</div>
 <!-- create your ticket-->
-<div class="content-section" style="position:relative; top:23px;"> 
+<div class="content-section" style="margin-top:4em;"> 
     <form method="POST" action="#">
-       <p><label for="fname">Name of the tickets yo want to update:</label></p>
-       <p><input type="text" name="nm"/></p>
-       <p><input class="btn btn-primary" type="submit" value="Update"/></p>
+        <div class="form-group">
+          <p><label for="fname">Name of the tickets you want to update:</label></p>
+          <p><input type="text" name="nm"/></p>
+          <p><input class="btn btn-primary" style="margin-top:1em;" type="submit" value="Update"/></p>
+        </div>  
     </form>     
 </div>
 {% endblock content %}

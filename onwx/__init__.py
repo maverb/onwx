@@ -15,9 +15,8 @@ db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
 #log in manager 
 login_manager=LoginManager(app)
-#
 login_manager.login_message_category= "info"
-#
+#my personal data to send e-mails(not available on git hub)
 app.config["MAIL_SERVER"]="smtp.googlemail.com"
 app.config["MAIL_PORT"]=587
 app.config["MAIL_USE_TLS"]=True

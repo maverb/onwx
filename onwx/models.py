@@ -18,12 +18,10 @@ class User(db.Model,UserMixin):
     image_file= db.Column(db.String(20), nullable=False, default="default.jpg")
     password= db.Column(db.String(60), nullable=False)
     posts= db.relationship("Post",backref="author", lazy=True)
-
-
+    #resetting the token if expired
     def get_reset_token(self,expires_sec=1800):
         s=Serializer(app.config["SECRET_KEY"], expires_sec)
         return s.dumps({"user_id": self.id}).decode('utf-8') 
-    
     @staticmethod
     def verify_reset_token(token):
         s= Serializer(app.config["SECRET_KEY"])
@@ -32,11 +30,9 @@ class User(db.Model,UserMixin):
         except:
             return None   
         return User.query.get(user_id)     
-
-    #this is a method that declares how our class is going to be printed out 
+    #this is a method that declares how our class is going to be printed out, for debbuging matters  
     def __repr__(self):
         return "user (%s,%s,%s) " % (self.username,self.email, self.image_file)
-
 
 class Post(db.Model):
     #unique id for the user
@@ -63,7 +59,6 @@ class Post(db.Model):
     def __repr__(self):
         return "%s,%s,%s,%s,%s" % (self.user_id,self.title,self.date_posted,self.content,self.image_file)
 
-
 #data base for the tickets
 class Tickets(db.Model):
     #unique id for the user
@@ -79,11 +74,10 @@ class Tickets(db.Model):
     #finish date and hour of the event 
     finish_dh_tickets=db.Column(db.DateTime, nullable=False)
     #id of the event we have a relationship with
-    post_id= db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    post_id= db.Column(db.Integer, db.ForeignKey("post.id"), nullable=True)
     #this is a method that declares how our class is going to be printed out 
     def __repr__(self):
         return "%s,%s,%s,%s,%s,%s,%s" % (self.id,self.post_id,self.ticket_type, self.ticket_quantity,self.price_ticket,self.start_dh_tickets,self.finish_dh_tickets)
-
 
 #data base structure for the clients
 class Customer(db.Model):

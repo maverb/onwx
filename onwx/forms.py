@@ -35,7 +35,6 @@ class UpdateAccountForm(FlaskForm):
     email=StringField('Email', validators=[DataRequired(),Email()])
     picture=FileField("Update Profile Picture", validators=[FileAllowed(["jpg","png"])])                      
     submit =SubmitField( 'Update')
-    
     #this method checks if an user is already taken
     def validate_username(self, username):
         if username.data != current_user.username:

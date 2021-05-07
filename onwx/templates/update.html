@@ -1,19 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<!-- get flash messages-->
-<div class=row>
-    <div class="col-md-8">
-       {% with messages= get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-             {% for category, message in messages %}
-                <div class="alert alert-{{category}}">
-                   <span>{{message}}</span>
-                </div>
-             {% endfor %}
-          {% endif %}
-       {% endwith %}
-    </div>
- </div> 
+
 
 <!-- section for updating the email,user and image -->
 <form method="POST" action="" enctype="multipart/form-data">
