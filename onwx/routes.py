@@ -215,7 +215,6 @@ def update_post(post_id):
 @login_required
 def update_tickets(post_id,name):
    post=Post.query.get_or_404(post_id)
-   print "the name of the ticket is %s" % (str(name))
    ticket_form=TicketForm()
    ticket=Tickets.query.filter(Tickets.post_id==post_id).filter(Tickets.ticket_type==str(name)).first()
    #update and validate tickets     
@@ -335,7 +334,7 @@ def customer(post_id):
                 p.add_header('image',"img")
                 msg.attach(p)
             except Exception as e:
-                print "we did not found the photo"
+                pass
             text=msg.as_string()
             #sending the e-mail
             try:
@@ -349,7 +348,7 @@ def customer(post_id):
                 smtp.sendmail(EMAIL_ADDRESS, reciver, text)
                 smtp.close()
             except:
-                print("mail not delivered")
+                pass
             flash("successfuly bought your tickets, check your email ","success")
             return redirect(url_for("home")) 
     return render_template("customer.html",postform=postform,customer=customer,ticket=ticket)   

@@ -24,4 +24,4 @@ app.config["MAIL_USERNAME"]="onwaxcomm@gmail.com"
 app.config["MAIL_PASSWORD"]="libernacus"
 mail=Mail(app)
 
-import routes
+from onwx import routes

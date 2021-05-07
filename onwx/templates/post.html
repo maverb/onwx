@@ -16,7 +16,7 @@
      <article class="media content-section">
          <div class="media-body">
              <div class="article-metadata">
-                 <a class="mr-2" href="{{ url_for('event', username=post.author.username) }}">{{ post.author.username }}</a>
+                 <a class="mr-2" href="{{ url_for('post_event', username=post.author.username) }}">{{ post.author.username }}</a>
              </div>
              <h2 class="article-title">{{ post.title }}</h2>
              <small class="text-muted"> party day {{ post.start_dh.strftime("%Y-%m-%d")  }}</small>
