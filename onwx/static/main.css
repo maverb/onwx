@@ -174,14 +174,14 @@ th{
 }
 
 .btn-primary{
-  color: white;
-  background-color:black;
-  border-color:white ;
+  color: white!important;
+  background-color:black!important;
+  border-color:white!important ;
 }
 
-.btn-outline-primary{
-  color:black;
-  border-color:white;
+.btn-outline{
+  color:black!important;
+  border-color:white!important;
 }
 
 .btn-primary:hover{
