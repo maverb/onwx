@@ -236,18 +236,17 @@ def update_tickets(post_id,name):
    return render_template("update_ticket.html",title="update tickets",ticket_form=ticket_form, legend="Update Tickets") 
 
 #view name of the ticket you want to update, we ask to the user which is the kind
-#of the ticket to be updated
+#of ticket to be updated
 @app.route("/post/<int:post_id>/name",methods=["GET","POST"])
 @login_required
 def name_update(post_id):
    post=Post.query.get_or_404(post_id)
    form=RegistrationForm()
    if request.method=="POST":
-      unicode_name=request.form["nm"]
-      name=unicode_name.encode('utf8')
+      name=request.form["nm"]
       try:
-         a=Tickets.query.filter(Tickets.post_id==post_id).filter(Tickets.ticket_type==name).first()
-         if name==a.ticket_type:
+         ticket_check=Tickets.query.filter(Tickets.post_id==post_id).filter(Tickets.ticket_type==name).first()
+         if name==ticket_check.ticket_type:
              return redirect(url_for('update_tickets',post_id=post.id,name=name))
       except:
           flash('there is no ticket with that name','danger')

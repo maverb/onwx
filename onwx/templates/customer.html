@@ -16,7 +16,7 @@
                               {% endfor %}
                           </div>
                     {% else %}
-                            {{ customer.number_tickets(class="form-control-label")}} 
+                        {{ customer.number_tickets(class="form-control")}} 
                     {% endif %}  
                 </div>    
                 <div class="form-group">
@@ -29,7 +29,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                    {{ customer.name(class="form-control-label")}} 
+                      {{ customer.name(class="form-control")}} 
                     {% endif %}  
                 </div>
                 <div class="form-group">
@@ -42,7 +42,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                    {{ customer.customer_email(class="form-control-label")}} 
+                      {{ customer.customer_email(class="form-control")}} 
                     {% endif %}  
                 </div>  
                 <div class="form-group">
@@ -55,7 +55,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ customer.card_number(class="form-control-label")}} 
+                    {{ customer.card_number(class="form-control")}} 
                 {% endif %}  
                 </div>  
                 <div class="form-group">

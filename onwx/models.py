@@ -91,7 +91,7 @@ class Customer(db.Model):
     #quantity of tickes bought by the customer
     number_tickets=db.Column(db.Integer,nullable=False)    
     #id of the kind ot ticket we have a relationship with
-    post_id= db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    post_id= db.Column(db.Integer, db.ForeignKey("post.id"), nullable=True)
     #this is a method that declares how our class is going to be printed out 
     def __repr__(self):
         return "%s,%s,%s" % (self.name,self.customer_email, self.number_tickets)
