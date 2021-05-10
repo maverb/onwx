@@ -338,7 +338,7 @@ def customer(post_id):
             #sending the e-mail
             try:
                 EMAIL_ADDRESS= "onwaxcomm@gmail.com"
-                EMAIL_PASSWORD="libernacus"
+                EMAIL_PASSWORD="librs"
                 smtp=smtplib.SMTP("smtp.gmail.com",587)
                 smtp.ehlo() #checks the email
                 smtp.starttls() #encrypts our information
