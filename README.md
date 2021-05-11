@@ -2,6 +2,10 @@
 
 Live entertainment tickets market place built in Python(Flask),SQLAlchemy,Css,Html and Javascript.
 
+I really suggest to watch this short video to have a better understanding of the platform. 
+
+https://www.youtube.com/watch?v=TIwJzpwhGBo
+
 How it works?
 
 To upload you tickets for selling them on the platform you have to create a user, click new event and insert the given form with the information of the event, 
