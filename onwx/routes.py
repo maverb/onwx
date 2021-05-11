@@ -303,7 +303,7 @@ def customer(post_id):
             #qr code generator, it sends you the ticket via e-mail(not available in the github version)
             string="234"
             url=pyqrcode.create(string)
-            url.png("/Users/maverb/Documents/la.jpg", scale=8)
+            url.png("/Users/maverb/Documents/qrcode/la.jpg", scale=8)
             #my e-mail data
             EMAIL_ADDRESS= "onwaxcomm@gmail.com"
             EMAIL_PASSWORD="lalala"
@@ -325,20 +325,19 @@ def customer(post_id):
             msg.attach(MIMEText(body,"plain"))
             #loading the generated qr code
             try:
-                img=file("/Users/maverb/Documents/la.jpg")
-                p=MIMEBase('image',"jpeg")
-                p.set_payload(img.read())
+                img="/Users/maverb/Documents/qrcode/la.jpg"
+                read_img=open(img,"rb")
+                p=MIMEBase("application",'octet-stream')
+                p.set_payload((read_img).read())
                 #encode file in ASCII characers to send by Email
                 encoders.encode_base64(p)
-                p.add_header('image',"img")
+                p.add_header('Content-Disposition','attachment',filename=img)
                 msg.attach(p)
             except Exception as e:
-                pass
+                print("we did not found")
             text=msg.as_string()
             #sending the e-mail
             try:
-                EMAIL_ADDRESS= "onwaxcomm@gmail.com"
-                EMAIL_PASSWORD="librs"
                 smtp=smtplib.SMTP("smtp.gmail.com",587)
                 smtp.ehlo() #checks the email
                 smtp.starttls() #encrypts our information
